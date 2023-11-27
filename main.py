@@ -83,7 +83,7 @@ class Dataset:
         # return i-th image with label from dataset
         return self.image(i), self.labels[i]
 
-    def get_info(self, set_name: str):
+    def get_info(self, set_name: str):  # LBL5
         # Pie chart
         unique_elements, counts = np.unique(self.labels, return_counts=True)
         pie_chart = []
@@ -97,7 +97,7 @@ class Dataset:
         # plt.savefig('models/train_small_pie.png')
         plt.show()
 
-    def display_random_image(self):
+    def display_random_image(self):  # LBL5
         img, lbl = self.random_image_with_label()
         print()
         print(f'Got numpy array of shape {img.shape}, and label with code {lbl}.')
@@ -194,7 +194,7 @@ class Model:
             horizontal_flip=True,
             vertical_flip=True,
             validation_split=0.2,
-        )
+        )  # LBL4: Использование аугментации и других способов синтетического расширения набора данных
 
         targets = to_categorical(dataset.labels, num_classes=9)  # Преобразование меток в категориальные
 
@@ -212,12 +212,14 @@ class Model:
                                  )
 
         hist = self.model.fit(train_gen, epochs=n_epochs, validation_data=val_gen)
+        #   LBL1: Валидация модели на части обучающей выборки
+        #   LBL2: Вывод различных показателей в процессе обучения
 
         history.append(hist)
 
         self.hist = history
 
-    def plot_hist(self, name):
+    def plot_hist(self, name):  # LBL3: Построение графиков, визуализирующих процесс обучения
         if len(self.hist) == 1:
             plt.figure(figsize=(5, 3))
 
@@ -289,16 +291,6 @@ class Model:
         return prediction
 
 
-
-# device = (
-#     "cuda"
-#     if torch.cuda.is_available()
-#     else "mps"
-#     if torch.backends.mps.is_available()
-#     else "cpu"
-# )
-# print(f"Using {device} device")
-
 set_name = 'small'
 
 if set_name == 'tiny':
@@ -313,46 +305,37 @@ elif set_name == 'normal':
 
 # d_train.get_info('Train')
 # d_test.get_info('Test')
-
-
+#
+#
 # d_train.display_random_image()
 
 # Model initialization
 # model = Model()
 # n_epochs = 10
-# # filename_save = f'{set_name}/{set_name}_{n_epochs}epochs/{set_name}_{n_epochs}epochs'
 # filename_save = f'{set_name}/{set_name}_{n_epochs}epochs/{set_name}_{n_epochs}epochs'
 # if not EVALUATE_ONLY:
 #     model.train(d_train, n_epochs=n_epochs, batch_size=8)
 #     model.plot_hist(f'{filename_save}_AccLoss_plot')
 #     model.save(filename_save)
-#     # model.plot_hist('normal/normal_10epochs_5CV')
-#     # model.save('normal/normal_10epochs_5CV')
-#     # 18min
 # else:
 #     # todo: your link goes here
 #     model.load(filename_save)
 
-# checkpoint = tf.train.Checkpoint(model)
-# checkpoint.restore(path).expect_partial()
 
-# # # evaluating model on 10% of test dataset
+# # evaluating model on 10% of test dataset
 # pred_1 = model.test_on_dataset(d_test_small, limit=0.1)
 # Metrics.print_all(d_test_small.labels[:len(pred_1)], pred_1, '10% of test')
 
-# # # evaluating model on full test dataset (may take time)
+# # evaluating model on full test dataset (may take time)
 # if TEST_ON_LARGE_DATASET:
-#     pred_2 = model.test_on_dataset(d_test_small)
-#     Metrics.print_all(d_test_small.labels, pred_2, 'test')
+#     pred_2 = model.test_on_dataset(d_test)
+#     Metrics.print_all(d_test.labels, pred_2, 'test')
 
 
 # Check the accuracy of the model in all test set
 final_model = Model()
 final_model.load('best/best')
-# d_test = Dataset('test_tiny')
-# d_test = Dataset('test_small')
 d_test = Dataset('test')
 d_test.get_info('Test')
 pred = final_model.test_on_dataset(d_test)
 Metrics.print_all(d_test.labels, pred, 'test')
-# 4.5 - 5 min -> 81 sec
