@@ -1,10 +1,10 @@
 # Digital-Pathology
 
 Для решения задачи рассматривались класические модель, основанная на свёрточных нейронных сетях. Был применен метод переноса обучения для классификации изображений на 9 классов: 'ADI', 'BACK', 'DEB', 'LYM', 'MUC', 'MUS', 'NORM', 'STR', 'TUM'.
-
+ 
 ## Архитектура:
-Преобученная модель, которую брали в качетве экстрактора признаков: EfficientNetB0 (https://arxiv.org/abs/1905.11946 — EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks).
-Модель, которая на вход принимала призники из EfficientNetB0: batch-нормализация, FC layer с некоторыми видами регуляризации, Dropout слоем и FC слоем с иготовой функцией активации (softmax) для определения вероятности класса.
+Преобученная модель, которая была взята в качетве экстрактора признаков: EfficientNetB0 (https://arxiv.org/abs/1905.11946 — EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks).
+Модель, которая на вход принимает призники из EfficientNetB0: batch-нормализация, FC layer с некоторыми видами регуляризации, Dropout слоем и FC слоем с иготовой функцией активации (softmax) для определения вероятности класса.
 Метод оптимизации: Adamax.
 Функция потерь: categorical_crossentropy.
 
@@ -84,7 +84,7 @@ pred = final_model.test_on_dataset(d_test)
 Metrics.print_all(d_test.labels, pred, 'test')
 ```
 
-Как загрузить лучшую модель и оценить ее на новом датасете ? Модель находится в ./models/best/. Поэтому путь для загрузкиЖ
+Как загрузить лучшую модель и оценить ее на новом датасете ? Модель находится в ./models/best/. Поэтому путь для загрузки:
 ```python
 model_best_weights_filename = 'best/best'
 final_model = Model()
